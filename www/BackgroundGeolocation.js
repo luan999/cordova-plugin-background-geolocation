@@ -173,6 +173,13 @@ var BackgroundGeolocation = {
       'deleteLocation', [locationId]);
   },
 
+  updateLocationForSync: function (locationId, position, direction, estimateMile, speed, success, failure) {
+    exec(success || emptyFnc,
+      failure || emptyFnc,
+      'BackgroundGeolocation',
+      'updateLocationForSync', [locationId, position, direction, estimateMile, speed]);
+  },
+
   deleteAllLocations: function (success, failure) {
     exec(success || emptyFnc,
       failure || emptyFnc,
