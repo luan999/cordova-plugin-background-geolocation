@@ -60,6 +60,7 @@ public class BackgroundGeolocationPlugin extends CordovaPlugin implements Plugin
     public static final String ACTION_GET_ALL_LOCATIONS = "getLocations";
     public static final String ACTION_GET_VALID_LOCATIONS = "getValidLocations";
     public static final String ACTION_DELETE_LOCATION = "deleteLocation";
+    public static final String ACTION_UPDATE_LOCATION_FOR_SYNC = "updateLocationForSync";
     public static final String ACTION_DELETE_ALL_LOCATIONS = "deleteAllLocations";
     public static final String ACTION_GET_CURRENT_LOCATION = "getCurrentLocation";
     public static final String ACTION_GET_CONFIG = "getConfig";
@@ -259,6 +260,26 @@ public class BackgroundGeolocationPlugin extends CordovaPlugin implements Plugin
                         callbackContext.sendPluginResult(ErrorPluginResult.from("Delete location failed", e, PluginException.JSON_ERROR));
                     }
                 }
+            });
+
+            return true;
+        // 增加變更GPS位置至Sync作業
+        } else if (ACTION_UPDATE_LOCATION_FOR_SYNC.equals(action)) {
+            runOnWebViewThread(new Runnable() {
+              public void run() {
+                try {
+                  Long locationId = data.getLong(0);
+                  String position = data.getString(1);
+                  String direction = data.getString(2);
+                  Double estimateMile = data.getDouble(3);
+                  Float speed = BigDecimal.valueOf(data.getDouble(4)).floatValue();
+                  facade.updateLocationForSync(locationId, position, direction, estimateMile, speed);
+                  callbackContext.success();
+                } catch (JSONException e) {
+                  logger.error("Update location for sync failed: {}", e.getMessage());
+                  callbackContext.sendPluginResult(ErrorPluginResult.from("Update location for sync failed", e, PluginException.JSON_ERROR));
+                }
+              }
             });
 
             return true;
